@@ -70,8 +70,8 @@ type WhatsAppMediaSender interface {
 Application code can accept only the capability it needs:
 
 ```go
-func SendLoginCode(ctx context.Context, sender messaging.SMSSender, phone, code string) error {
-    _, err := sender.SendSMS(ctx, messaging.SMSMessage{
+func SendLoginCode(ctx context.Context, sender smskit.SMSSender, phone, code string) error {
+    _, err := sender.SendSMS(ctx, smskit.SMSMessage{
         To:   phone,
         Body: "Your login code is " + code,
     })
@@ -164,7 +164,7 @@ This SDK is a messaging SDK. Some candidate providers (for example Wasiliana) al
 
 ## 5. Proposed repository layout
 
-The final module path and public package name should be chosen before Phase 0 is merged. The layout below uses `messaging` as the conceptual root package.
+The final module path and public package name should be chosen before Phase 0 is merged. The layout below uses `smskit` as the root package.
 
 ```
 .
@@ -727,7 +727,7 @@ The test suite should use several layers:
 - **Compile-time interface checks** — Each provider should explicitly assert supported capabilities:
 
   ```go
-  var _ messaging.SMSSender = (*Client)(nil)
+  var _ smskit.SMSSender = (*Client)(nil)
   ```
 
   No assertion should exist for unsupported capabilities.

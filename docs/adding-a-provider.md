@@ -1,7 +1,7 @@
 # Adding a provider
 
 Each adapter is a standalone top-level package that depends on the root
-`messaging` package and may reuse code under `internal/`. Provider packages must
+`smskit` package and may reuse code under `internal/`. Provider packages must
 not import one another or move provider wire structures into the root package.
 
 1. Complete a discovery note using current official documentation. Record authentication,

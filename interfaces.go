@@ -1,4 +1,4 @@
-package messaging
+package smskit
 
 import "context"
 
