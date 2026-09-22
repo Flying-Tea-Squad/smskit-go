@@ -164,7 +164,7 @@ This SDK is a messaging SDK. Some candidate providers (for example Wasiliana) al
 
 ## 5. Proposed repository layout
 
-The final module path and public package name should be chosen before Phase 0 is merged. The layout below uses `smskit` as the root package.
+The module path is `github.com/Flying-Tea-Squad/smskit-go`, and the root package is `smskit`. Go 1.22 is the minimum supported version; see [`docs/design-decisions.md`](docs/design-decisions.md) for the compatibility policy.
 
 ```
 .
@@ -379,7 +379,7 @@ The example webhook server must demonstrate:
 **Work**
 
 - Choose the module path, package name, supported Go versions, and license.
-- Initialize `go.mod`.
+- Initialize `go.mod` with `github.com/Flying-Tea-Squad/smskit-go` and Go 1.22.
 - Add the shared interfaces and initial message/result/error types.
 - Implement the internal HTTP transport rules required by the first provider.
 - Implement a configurable fake SMS sender.
@@ -390,8 +390,8 @@ The example webhook server must demonstrate:
   - `go test -race ./...`
   - `go vet ./...`
   - the selected linter
-- Add the initial README, contribution guide, security policy, code of conduct, and license.
-- Record design decisions that affect the public API.
+- Add the initial README and license.
+- Record the module, public package boundary, and compatibility policy in the design documentation.
 
 The fake sender should allow a test to preconfigure a result or error and should record received messages. It must not use magic phone-number or message-body values to decide whether a call succeeds.
 
