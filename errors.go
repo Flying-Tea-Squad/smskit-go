@@ -9,7 +9,6 @@ import (
 type ErrorKind string
 
 const (
-	const (
 	// ErrorInvalidRequest means the request was invalid or incomplete.
 	ErrorInvalidRequest ErrorKind = "invalid_request"
 	// ErrorAuthentication means the provider doesn't accept your login or API key.
@@ -26,8 +25,6 @@ const (
 	ErrorTransport ErrorKind = "transport"
 	// ErrorProvider means the provider itself had an error.
 	ErrorProvider ErrorKind = "provider"
-)
-	
 )
 
 // ErrInvalidRequest marks input rejected before a provider request.
