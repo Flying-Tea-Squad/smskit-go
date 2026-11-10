@@ -19,7 +19,7 @@ func (m WhatsAppText) Validate() error {
 		return err
 	}
 	if strings.TrimSpace(m.Body) == "" {
-		return fmt.Errorf("the message is empty: %w", ErrInvalidRequest)
+		return fmt.Errorf("whatsapp text body is required: %w", ErrInvalidRequest)
 	}
 	return nil
 }
@@ -30,10 +30,10 @@ func (m WhatsAppTemplate) Validate() error {
 		return err
 	}
 	if strings.TrimSpace(m.Name) == "" {
-		return fmt.Errorf("the template name is empty: %w", ErrInvalidRequest)
+		return fmt.Errorf("whatsapp template name is required: %w", ErrInvalidRequest)
 	}
 	if strings.TrimSpace(m.Language) == "" {
-		return fmt.Errorf("the template language is empty: %w", ErrInvalidRequest)
+		return fmt.Errorf("whatsapp template language is required: %w", ErrInvalidRequest)
 	}
 	return nil
 }
@@ -44,7 +44,7 @@ func (m WhatsAppMedia) Validate() error {
 		return err
 	}
 	if strings.TrimSpace(m.URL) == "" {
-		return fmt.Errorf("the media link is empty: %w", ErrInvalidRequest)
+		return fmt.Errorf("whatsapp media url is required: %w", ErrInvalidRequest)
 	}
 	return nil
 }
