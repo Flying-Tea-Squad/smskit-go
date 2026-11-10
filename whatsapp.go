@@ -2,6 +2,7 @@ package smskit
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 )
 
@@ -44,13 +45,17 @@ func (m WhatsAppTemplate) Validate() error {
 	return nil
 }
 
-// Validate makes sure WhatsApp media has a recipient and a link to the file.
+// Validate makes sure WhatsApp media has a recipient and a web link (http or https).
 func (m WhatsAppMedia) Validate() error {
 	if err := requireRecipient("whatsapp media", m.To); err != nil {
 		return err
 	}
 	if strings.TrimSpace(m.URL) == "" {
 		return fmt.Errorf("whatsapp media url is required: %w", ErrInvalidRequest)
+	}
+	u, err := url.Parse(m.URL)
+	if err != nil || (u.Scheme != "http" && u.Scheme != "https") || u.Host == "" {
+		return fmt.Errorf("whatsapp media url must be a http or https link: %w", ErrInvalidRequest)
 	}
 	return nil
 }
