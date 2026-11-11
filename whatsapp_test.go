@@ -5,58 +5,41 @@ import (
 	"testing"
 )
 
-func TestWhatsAppText(t *testing.T) {
-	msg := WhatsAppText{To: "+254700000000", Body: "hi"}
-	if err := msg.Validate(); err != nil {
-		t.Error("a full message should pass")
-	}
+func TestWhatsAppValidate(t *testing.T) {
+	tests := []struct {
+		name    string
+		msg     interface{ Validate() error }
+		wantErr bool
+	}{
+		{"text valid", WhatsAppText{To: "+254700000000", Body: "hi"}, false},
+		{"text missing recipient", WhatsAppText{Body: "hi"}, true},
+		{"text missing body", WhatsAppText{To: "+254700000000"}, true},
+		{"text spaces only", WhatsAppText{To: "  ", Body: "\t"}, true},
 
-	msg = WhatsAppText{Body: "hi"}
-	if !errors.Is(msg.Validate(), ErrInvalidRequest) {
-		t.Error("a message with no recipient should fail")
-	}
+		{"template valid", WhatsAppTemplate{To: "+254700000000", Name: "welcome", Language: "en"}, false},
+		{"template valid with parameters", WhatsAppTemplate{To: "+254700000000", Name: "welcome", Language: "en", Parameters: []string{"Sharleen"}}, false},
+		{"template missing recipient", WhatsAppTemplate{Name: "welcome", Language: "en"}, true},
+		{"template missing name", WhatsAppTemplate{To: "+254700000000", Language: "en"}, true},
+		{"template missing language", WhatsAppTemplate{To: "+254700000000", Name: "welcome"}, true},
+		{"template spaces only name", WhatsAppTemplate{To: "+254700000000", Name: " ", Language: "en"}, true},
+		{"template empty parameter", WhatsAppTemplate{To: "+254700000000", Name: "welcome", Language: "en", Parameters: []string{""}}, true},
 
-	msg = WhatsAppText{To: "+254700000000"}
-	if !errors.Is(msg.Validate(), ErrInvalidRequest) {
-		t.Error("a message with no body should fail")
+		{"media valid", WhatsAppMedia{To: "+254700000000", URL: "https://example.com/a.png"}, false},
+		{"media missing recipient", WhatsAppMedia{URL: "https://example.com/a.png"}, true},
+		{"media missing url", WhatsAppMedia{To: "+254700000000"}, true},
+		{"media spaces only url", WhatsAppMedia{To: "+254700000000", URL: "  "}, true},
+		{"media not a url", WhatsAppMedia{To: "+254700000000", URL: "not a url"}, true},
+		{"media file url", WhatsAppMedia{To: "+254700000000", URL: "file:///etc/passwd"}, true},
 	}
-}
-
-func TestWhatsAppTemplate(t *testing.T) {
-	msg := WhatsAppTemplate{To: "+254700000000", Name: "welcome", Language: "en"}
-	if err := msg.Validate(); err != nil {
-		t.Error("a full template should pass")
-	}
-
-	msg = WhatsAppTemplate{Name: "welcome", Language: "en"}
-	if !errors.Is(msg.Validate(), ErrInvalidRequest) {
-		t.Error("a template with no recipient should fail")
-	}
-
-	msg = WhatsAppTemplate{To: "+254700000000", Language: "en"}
-	if !errors.Is(msg.Validate(), ErrInvalidRequest) {
-		t.Error("a template with no name should fail")
-	}
-
-	msg = WhatsAppTemplate{To: "+254700000000", Name: "welcome"}
-	if !errors.Is(msg.Validate(), ErrInvalidRequest) {
-		t.Error("a template with no language should fail")
-	}
-}
-
-func TestWhatsAppMedia(t *testing.T) {
-	msg := WhatsAppMedia{To: "+254700000000", URL: "https://example.com/a.png"}
-	if err := msg.Validate(); err != nil {
-		t.Error("full media should pass")
-	}
-
-	msg = WhatsAppMedia{URL: "https://example.com/a.png"}
-	if !errors.Is(msg.Validate(), ErrInvalidRequest) {
-		t.Error("media with no recipient should fail")
-	}
-
-	msg = WhatsAppMedia{To: "+254700000000"}
-	if !errors.Is(msg.Validate(), ErrInvalidRequest) {
-		t.Error("media with no link should fail")
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.msg.Validate()
+			if tt.wantErr && !errors.Is(err, ErrInvalidRequest) {
+				t.Errorf("want ErrInvalidRequest, got %v", err)
+			}
+			if !tt.wantErr && err != nil {
+				t.Errorf("unexpected error: %v", err)
+			}
+		})
 	}
 }
