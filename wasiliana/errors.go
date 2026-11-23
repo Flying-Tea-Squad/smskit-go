@@ -3,6 +3,7 @@ package wasiliana
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	smskit "github.com/Flying-Tea-Squad/smskit-go"
 )
@@ -31,6 +32,8 @@ func toError(httpStatus int, body []byte) error {
 		e.Kind = smskit.ErrorAuthentication
 	case httpStatus == http.StatusForbidden:
 		e.Kind = smskit.ErrorAuthorization
+	case httpStatus == http.StatusUnprocessableEntity:
+		e.Kind = smskit.ErrorRejected // live API: unknown app / bad key answers 422
 	case httpStatus == http.StatusTooManyRequests:
 		e.Kind, e.Retryable = smskit.ErrorRateLimited, true
 	case httpStatus == http.StatusInternalServerError || httpStatus == http.StatusServiceUnavailable:
@@ -53,6 +56,7 @@ func toError(httpStatus int, body []byte) error {
 	}
 	if json.Unmarshal(body, &r) == nil {
 		for _, m := range []string{r.Data, r.Message} {
+			m = strings.TrimSpace(m) // live API sends e.g. "App does not match your api key "
 			if knownMessages[m] {
 				e.Message = m
 				break

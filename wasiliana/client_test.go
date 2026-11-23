@@ -118,6 +118,8 @@ func TestSendErrors(t *testing.T) {
 		{"400", 400, `{}`, smskit.ErrorInvalidRequest, false, ""},
 		{"406", 406, `{}`, smskit.ErrorInvalidRequest, false, ""},
 		{"401", 401, "error_401.json", smskit.ErrorAuthentication, false, "ApiKey must be present in the header"},
+		{"live 401 trailing space", 401, `{"message":"App does not match your api key ","code":401}`, smskit.ErrorAuthentication, false, "App does not match your api key"},
+		{"live 422 bad key", 422, `{"message":"App does not exist","code":422}`, smskit.ErrorRejected, false, "App does not exist"},
 		{"403", 403, `{}`, smskit.ErrorAuthorization, false, ""},
 		{"404", 404, `{}`, smskit.ErrorProvider, false, ""},
 		{"405", 405, `{}`, smskit.ErrorProvider, false, ""},
