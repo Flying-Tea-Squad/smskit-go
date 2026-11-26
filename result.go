@@ -30,3 +30,12 @@ type SendResult struct {
 	ProviderStatus string
 	Raw            json.RawMessage
 }
+
+// NormalizeStatus returns the mapped status for a provider status.
+// If the provider status is not recognized, it returns StatusUnknown.
+func NormalizeStatus(providerStatus string, mapping map[string]MessageStatus) MessageStatus {
+	if status, ok := mapping[providerStatus]; ok {
+		return status
+	}
+	return StatusUnknown
+}
